@@ -1,12 +1,7 @@
 import React from "react";
 import Resister from "./Resister.json";
 import getWeb3 from "./getWeb3";
-
-import { Row, Col, Button, Form, Modal } from "react-bootstrap";
-import "bootstrap/dist/css/bootstrap.min.css";
-
 import "./App.css";
-
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -21,26 +16,8 @@ class App extends React.Component {
       outputName: null,
       outputAge: null,
       outputHobby: null,
-
-      ////
-      lines: [],
-
-      // モーダル
-      show: false,
-      // フォームチェック
-      validated: false,
     };
   }
-
-  // モーダル設定
-  handleClose = async () => {
-    await this.setState({ show: false });
-
-    // ページリロード
-    document.location.reload();
-  }
-
-  handleShow = async () => this.setState({ show: true });
 
   componentDidMount = async () => {
     try {
@@ -62,15 +39,8 @@ class App extends React.Component {
       console.error(error);
     }
 
-    const { accounts, contract } = this.state;
+    const { accounts } = this.state;
     console.log(accounts);
-
-    const item = await contract.methods.accounts(accounts[0]).call();
-    this.state.lines.push({
-      item
-    });
-
-    console.log(this.state.lines);
   };
 
   // アカウント情報の登録
@@ -82,7 +52,7 @@ class App extends React.Component {
     console.log(result);
 
     if (result.status === true) {
-      this.handleShow();
+      alert('会員登録が完了しました。');
     }
   };
 
@@ -104,117 +74,58 @@ class App extends React.Component {
     this.setState({ [name]: event.target.value });
   };
 
-  // フォーム最終確認
-  handleSubmit = (event) => {
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-    this.setState({ validated: true });
-  };
-
-
   render() {
     return (
       <div className="App">
-        <Row className="text-left m-5">
-          <Col md={{ span: 4, offset: 2 }}>
-            <Form className="justify-content-center"
-              noValidate validated={this.state.validated} >
+        <br />
+        <form>
+          <div>
+            <label>氏名：</label>
+            <input
+              onChange={this.handleChange("name")} />
+          </div>
 
-              <Form.Group controlId="validationCustom03">
-                <Form.Label>Name</Form.Label>
-                <Form.Control
-                  type="name"
-                  onChange={this.handleChange("name")}
-                  placeholder="Enter Name"
-                  required />
-                <Form.Control.Feedback type="invalid">
-                  Please enter name.
-                </Form.Control.Feedback>
-              </Form.Group>
+          <div>
+            <label>年齢：</label>
+            <input
+              onChange={this.handleChange("age")} />
+          </div>
 
-              <Form.Group controlId="validationCustom03">
-                <Form.Label>Age</Form.Label>
-                <Form.Control
-                  type="text"
-                  onChange={this.handleChange("age")}
-                  placeholder="Enter Age"
-                  required />
-                <Form.Text className="text-muted">
-                  We'll never share your age with anyone else.
-                </Form.Text>
-                <Form.Control.Feedback type="invalid">
-                  Please enter age.
-                </Form.Control.Feedback>
-              </Form.Group>
+          <div>
+            <label>趣味：</label>
+            <input
+              onChange={this.handleChange("hobby")} />
+          </div>
 
-              <Form.Group controlId="validationCustom03">
-                <Form.Label>Hobby</Form.Label>
-                <Form.Control
-                  type="text"
-                  onChange={this.handleChange("hobby")}
-                  placeholder="Enter Hobby"
-                  required />
-                <Form.Control.Feedback type="invalid">
-                  Please enter hobby.
-                </Form.Control.Feedback>
-              </Form.Group>
+          <button type='button' onClick={this.writeRecord}>
+            会員登録
+          </button>
+        </form>
 
-              {/* フォームチェック */}
-              <Form.Group>
-                <Form.Check
-                  required
-                  label="Agree to terms and conditions"
-                  feedback="You must agree before submitting."
-                  onChange={this.handleSubmit}
-                />
-              </Form.Group>
+        <br />
+        <br />
 
-              <Button variant="primary" type="submit" onClick={this.writeRecord}>
-                会員登録
-              </Button>
+        <form>
+          <label>検索したいアドレスを入力してください。</label>
+          <input onChange={this.handleChange("address")} />
 
-              {/* モーダル */}
-              <Modal show={this.state.show} onHide={this.handleClose}>
-                <Modal.Header closeButton>
-                  <Modal.Title>Wellcome to BcDiary!!</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>会員登録が完了しました。</Modal.Body>
-                <Modal.Footer>
-                  <Button variant="secondary" onClick={this.handleClose}>
-                    Close
-                  </Button>
-                </Modal.Footer>
-              </Modal>
-            </Form>
-          </Col>
+          <button type='button' onClick={this.viewRecord}>
+            検索
+            </button>
+        </form>
 
-          <Col md={{ span: 4, offset: 0 }} className='ml-5'>
-            <Form className="justify-content-center">
-              <Form.Group controlId="formBasicEmail">
-                <Form.Label>検索したいアドレスを入力してください。</Form.Label>
-                <Form.Control onChange={this.handleChange("address")}
-                  placeholder="Search" />
-              </Form.Group>
-              <Button variant="primary" type="submit" onClick={this.viewRecord}>
-                閲覧
-          </Button>
-            </Form>
+        <br />
+        <br />
 
-            <br />
-            <br />
+        {this.state.outputName ? <p>氏名: {this.state.outputName}</p> : <p></p>}
+        {this.state.outputAge ? <p>年齢: {this.state.outputAge}</p> : <p></p>}
+        {this.state.outputHobby ? <p>趣味: {this.state.outputHobby}</p> : <p></p>}
 
-            {this.state.outputName ? <p>Name: {this.state.outputName}</p> : <p></p>}
-            {this.state.outputAge ? <p>Age: {this.state.outputAge}</p> : <p></p>}
-            {this.state.outputHobby ? <p>Hobby: {this.state.outputHobby}</p> : <p></p>}
+      </div>
 
-          </Col>
-        </Row>
-      </div >
     );
   }
 }
 
 export default App;
+
