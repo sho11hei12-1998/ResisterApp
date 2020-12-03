@@ -172,7 +172,7 @@ class App extends React.Component {
                 />
               </Form.Group>
 
-              <Button variant="primary" type="submit" onClick={this.writeRecord}>
+              <Button variant="primary" type="button" onClick={this.writeRecord}>
                 会員登録
               </Button>
 
@@ -198,7 +198,7 @@ class App extends React.Component {
                 <Form.Control onChange={this.handleChange("address")}
                   placeholder="Search" />
               </Form.Group>
-              <Button variant="primary" type="submit" onClick={this.viewRecord}>
+              <Button variant="primary" type="button" onClick={this.viewRecord}>
                 閲覧
           </Button>
             </Form>
